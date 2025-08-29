@@ -1,5 +1,5 @@
-import React from 'react';
-import { Filter } from 'lucide-react';
+import React, { useState } from 'react';
+import { Filter, List, CheckCircle2, HelpCircle } from 'lucide-react';
 
 interface QuestionFilterProps {
   currentFilter: 'all' | 'answered' | 'unanswered';
@@ -17,10 +17,12 @@ const QuestionFilter: React.FC<QuestionFilterProps> = ({
   questionCounts 
 }) => {
   const filterOptions = [
-    { value: 'all' as const, label: 'All Questions', count: questionCounts.total },
-    { value: 'answered' as const, label: 'Answered', count: questionCounts.answered },
-    { value: 'unanswered' as const, label: 'Unanswered', count: questionCounts.unanswered },
+    { value: 'all' as const, label: 'All Questions', icon: List, count: questionCounts.total },
+    { value: 'answered' as const, label: 'Answered', icon: CheckCircle2, count: questionCounts.answered },
+    { value: 'unanswered' as const, label: 'Unanswered', icon: HelpCircle, count: questionCounts.unanswered },
   ];
+
+  const [hoveredFilter, setHoveredFilter] = useState<string | null>(null);
 
   return (
     <div className="flex items-center justify-between mb-6">
@@ -29,26 +31,40 @@ const QuestionFilter: React.FC<QuestionFilterProps> = ({
       <div className="flex items-center space-x-2">
         <Filter className="h-5 w-5 text-gray-400" />
         <div className="flex bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-          {filterOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => onFilterChange(option.value)}
-              className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                currentFilter === option.value
-                  ? 'bg-red-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              {option.label}
-              <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-                currentFilter === option.value
-                  ? 'bg-red-500 text-white'
-                  : 'bg-gray-100 text-gray-600'
-              }`}>
-                {option.count}
-              </span>
-            </button>
-          ))}
+          {filterOptions.map((option) => {
+            const IconComponent = option.icon;
+            return (
+              <div key={option.value} className="relative">
+                <button
+                  onClick={() => onFilterChange(option.value)}
+                  onMouseEnter={() => setHoveredFilter(option.value)}
+                  onMouseLeave={() => setHoveredFilter(null)}
+                  className={`px-4 py-2 text-sm font-medium transition-colors duration-200 flex items-center ${
+                    currentFilter === option.value
+                      ? 'bg-red-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <IconComponent className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">{option.label}</span>
+                  <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+                    currentFilter === option.value
+                      ? 'bg-red-500 text-white'
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {option.count}
+                  </span>
+                </button>
+                
+                {/* Mobile tooltip */}
+                {hoveredFilter === option.value && (
+                  <div className="md:hidden absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg z-10">
+                    {option.label}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
