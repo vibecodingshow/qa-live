@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Header from '../components/Header';
-import StatisticsCards from '../components/StatisticsCards';
+
 import QuestionCard from '../components/QuestionCard';
 import QuestionFilter from '../components/QuestionFilter';
 import QuestionModal from '../components/QuestionModal';
@@ -16,6 +16,23 @@ const Home: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'answered' | 'unanswered'>('all');
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [showHeroSection, setShowHeroSection] = useState(true);
+
+  // Set responsive default visibility for hero section
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const isMobile = window.innerWidth < 768; // Standard mobile breakpoint
+      setShowHeroSection(!isMobile); // Hide on mobile, show on desktop
+    };
+
+    // Check initial screen size
+    checkScreenSize();
+
+    // Add resize listener for responsive behavior
+    window.addEventListener('resize', checkScreenSize);
+    
+    // Cleanup listener on component unmount
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
   const { speaker } = useAuth();
 
   const filteredAndSortedQuestions = useMemo(() => {
@@ -82,8 +99,6 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
-        searchTerm={searchTerm} 
-        onSearchChange={setSearchTerm}
         onToggleHero={() => setShowHeroSection(!showHeroSection)}
         isHeroVisible={showHeroSection}
       />
@@ -91,7 +106,24 @@ const Home: React.FC = () => {
       {showHeroSection && <HeroSection />}
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <StatisticsCards questions={questions} />
+        
+        {/* Search Input */}
+        <div className="mb-6">
+          <div className="relative max-w-md mx-auto">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search questions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
         
         <QuestionFilter
           currentFilter={statusFilter}
