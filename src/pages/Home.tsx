@@ -5,6 +5,7 @@ import QuestionCard from '../components/QuestionCard';
 import QuestionFilter from '../components/QuestionFilter';
 import QuestionModal from '../components/QuestionModal';
 import FloatingSubmitButton from '../components/FloatingSubmitButton';
+import HeroSection from '../components/HeroSection';
 import { Question } from '../types';
 import { sampleQuestions } from '../data/Questions';
 import { useAuth } from '../hooks/useAuth';
@@ -14,6 +15,7 @@ const Home: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'answered' | 'unanswered'>('all');
   const [showQuestionModal, setShowQuestionModal] = useState(false);
+  const [showHeroSection, setShowHeroSection] = useState(true);
   const { speaker } = useAuth();
 
   const filteredAndSortedQuestions = useMemo(() => {
@@ -81,8 +83,12 @@ const Home: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Header 
         searchTerm={searchTerm} 
-        onSearchChange={setSearchTerm} 
+        onSearchChange={setSearchTerm}
+        onToggleHero={() => setShowHeroSection(!showHeroSection)}
+        isHeroVisible={showHeroSection}
       />
+      
+      {showHeroSection && <HeroSection />}
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <StatisticsCards questions={questions} />
