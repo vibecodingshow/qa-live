@@ -10,7 +10,7 @@ describe('API Integration Tests', () => {
         .expect('Content-Type', /text/)
         .expect(200);
       
-      expect(response.text).toBe('Hello Backend for Q&A project');
+      expect(response.text).toBe('Hello Backend for Q&A Live');
     });
   });
 
