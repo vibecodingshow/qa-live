@@ -1,5 +1,5 @@
 const request = require('supertest');
-// Fix the import for TypeScript modules
+// Use the compiled JavaScript version
 const app = require('../dist/app').default;
 
 describe('API Integration Tests', () => {
