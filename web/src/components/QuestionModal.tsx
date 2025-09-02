@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface QuestionModalProps {
   isOpen: boolean;
@@ -8,6 +9,7 @@ interface QuestionModalProps {
 }
 
 const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, onSubmit }) => {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [submitterName, setSubmitterName] = useState('');
@@ -29,7 +31,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, onSubmit
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Submit a Question</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('questionForm.title')}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 focus:outline-none"
@@ -41,7 +43,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, onSubmit
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="submitterName" className="block text-sm font-medium text-gray-700 mb-1">
-              Your Name
+              {t('questionForm.yourName')}
             </label>
             <input
               id="submitterName"
@@ -49,14 +51,14 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, onSubmit
               value={submitterName}
               onChange={(e) => setSubmitterName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              placeholder="Enter your name"
+              placeholder={t('questionForm.namePlaceholder')}
               required
             />
           </div>
 
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-              Question Title
+              {t('questionForm.questionTitle')}
             </label>
             <input
               id="title"
@@ -64,14 +66,14 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, onSubmit
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              placeholder="Enter question title"
+              placeholder={t('questionForm.titlePlaceholder')}
               required
             />
           </div>
 
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-              Question Description
+              {t('questionForm.questionDescription')}
             </label>
             <textarea
               id="description"
@@ -79,7 +81,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, onSubmit
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              placeholder="Describe your question in detail"
+              placeholder={t('questionForm.descriptionPlaceholder')}
               required
             />
           </div>
@@ -90,13 +92,13 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, onSubmit
               onClick={onClose}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
               className="flex-1 px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             >
-              Submit Question
+              {t('questionForm.submit')}
             </button>
           </div>
         </form>

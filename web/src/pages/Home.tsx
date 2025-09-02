@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 
 import QuestionCard from '../components/QuestionCard';
@@ -11,6 +12,7 @@ import { sampleQuestions } from '../data/Questions';
 import { useAuth } from '../hooks/useAuth';
 
 const Home: React.FC = () => {
+  const { t } = useTranslation();
   const [questions, setQuestions] = useState<Question[]>(sampleQuestions);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'answered' | 'unanswered'>('all');
@@ -117,7 +119,7 @@ const Home: React.FC = () => {
             </div>
             <input
               type="text"
-              placeholder="Search questions..."
+              placeholder={t('questionList.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
@@ -136,8 +138,8 @@ const Home: React.FC = () => {
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">
                 {searchTerm || statusFilter !== 'all' 
-                  ? 'No questions found matching your filters.' 
-                  : 'No questions yet. Be the first to ask!'
+                  ? t('questionList.noQuestionsFiltered')
+                  : t('questionList.noQuestions')
                 }
               </p>
             </div>

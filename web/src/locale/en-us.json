@@ -1,0 +1,85 @@
+{
+  "common": {
+    "appName": "Q&A Live",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "language": "Language",
+    "welcome": "Welcome",
+    "hideQR": "Hide QR",
+    "showQR": "Show QR",
+    "hideQRCode": "Hide QR Code",
+    "showQRCode": "Show QR Code"
+  },
+  "header": {
+    "title": "Q&A Live",
+    "subtitle": "Ask questions anonymously"
+  },
+  "heroSection": {
+    "title": "Live Q&A Session",
+    "scanQRCode": "Scan the QR code to access this session on your mobile device"
+  },
+  "questionForm": {
+    "placeholder": "Type your question here...",
+    "submit": "Submit Question",
+    "anonymous": "Ask anonymously",
+    "success": "Question submitted successfully!",
+    "error": "Failed to submit question",
+    "title": "Submit a Question",
+    "yourName": "Your Name",
+    "namePlaceholder": "Enter your name",
+    "questionTitle": "Question Title",
+    "titlePlaceholder": "Enter question title",
+    "questionDescription": "Question Description",
+    "descriptionPlaceholder": "Describe your question in detail"
+  },
+  "questionList": {
+    "title": "Questions",
+    "empty": "No questions yet",
+    "filter": "Filter questions",
+    "sort": "Sort by",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "mostVoted": "Most voted",
+    "searchPlaceholder": "Search questions...",
+    "noQuestionsFiltered": "No questions found matching your filters.",
+    "noQuestions": "No questions yet. Be the first to ask!"
+  },
+  "questionFilter": {
+    "allQuestions": "All Questions",
+    "answered": "Answered",
+    "unanswered": "Unanswered"
+  },
+  "questionCard": {
+    "answered": "Answered",
+    "unanswered": "Unanswered",
+    "selectToAnswer": "Select to Answer",
+    "answer": "Answer",
+    "answeredBy": "Answered by"
+  },
+  "answerModal": {
+    "title": "Answer Question",
+    "askedBy": "Asked by",
+    "howToAnswer": "How would you like to answer this question?",
+    "provideWrittenAnswer": "Provide written answer",
+    "answerLiveOnStage": "Answer live on stage",
+    "yourAnswer": "Your Answer",
+    "answerPlaceholder": "Type your answer here...",
+    "answeredLiveOnStage": "Answered live on stage",
+    "stageAnswerExplanation": "This question will be marked as answered and noted as \"Answered live on stage\". The audience will know that you addressed this question during your presentation.",
+    "submitAnswer": "Submit Answer"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "speakerMode": "Speaker Mode",
+    "speakerLogin": "Speaker Login",
+    "usernamePlaceholder": "Enter your username",
+    "passwordPlaceholder": "Enter your password",
+    "invalidCredentials": "Invalid username or password"
+  }
+}

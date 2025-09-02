@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Search, LogIn, LogOut, MessageSquare, Menu, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import LoginModal from './LoginModal';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 interface HeaderProps {
   onToggleHero: () => void;
@@ -12,6 +14,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleHero, isHeroVisible }) => {
   const { isAuthenticated, speaker, logout } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logout();
@@ -37,12 +40,13 @@ const Header: React.FC<HeaderProps> = ({ onToggleHero, isHeroVisible }) => {
                 <div className="bg-red-600 p-2 rounded-lg">
                   <MessageSquare className="h-6 w-6 text-white" />
                 </div>
-                <h1 className="text-2xl font-bold text-blue-900">Q&A Live</h1>
+                <h1 className="text-2xl font-bold text-blue-900">{t('header.title')}</h1>
               </div>
             </div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-4">
+              <LanguageSwitcher />
               <button
                 onClick={onToggleHero}
                 className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
@@ -58,20 +62,20 @@ const Header: React.FC<HeaderProps> = ({ onToggleHero, isHeroVisible }) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
                 )}
-                {isHeroVisible ? "Hide QR" : "Show QR"}
+                {isHeroVisible ? t('common.hideQR') : t('common.showQR')}
               </button>
               
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   <span className="text-sm font-medium text-gray-700">
-                    Welcome, {speaker?.name}
+                    {t('common.welcome')}, {speaker?.name}
                   </span>
                   <button
                     onClick={handleLogout}
                     className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
-                    Logout
+                    {t('auth.logout')}
                   </button>
                 </div>
               ) : (
@@ -80,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleHero, isHeroVisible }) => {
                   className="flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                 >
                   <LogIn className="h-4 w-4 mr-2" />
-                  Speaker Login
+                  {t('auth.speakerLogin')}
                 </button>
               )}
             </div>
@@ -107,6 +111,10 @@ const Header: React.FC<HeaderProps> = ({ onToggleHero, isHeroVisible }) => {
         {isMobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
+              {/* Language Switcher */}
+              <div className="px-3 py-2">
+                <LanguageSwitcher />
+              </div>
               {/* QR Toggle Button */}
               <button
                 onClick={() => { onToggleHero(); closeMobileMenu(); }}
@@ -122,7 +130,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleHero, isHeroVisible }) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
                 )}
-                {isHeroVisible ? "Hide QR Code" : "Show QR Code"}
+                {isHeroVisible ? t('common.hideQRCode') : t('common.showQRCode')}
               </button>
 
 
@@ -131,14 +139,14 @@ const Header: React.FC<HeaderProps> = ({ onToggleHero, isHeroVisible }) => {
               {isAuthenticated ? (
                 <div className="px-3 py-2 space-y-2">
                   <div className="text-sm font-medium text-gray-700 px-3 py-2">
-                    Welcome, {speaker?.name}
+                    {t('common.welcome')}, {speaker?.name}
                   </div>
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center px-3 py-2 text-left text-base font-medium text-gray-700 rounded-md hover:bg-gray-50"
                   >
                     <LogOut className="h-5 w-5 mr-3" />
-                    Logout
+                    {t('auth.logout')}
                   </button>
                 </div>
               ) : (
@@ -147,7 +155,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleHero, isHeroVisible }) => {
                   className="w-full flex items-center px-3 py-2 text-left text-base font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
                 >
                   <LogIn className="h-5 w-5 mr-3" />
-                  Speaker Login
+                  {t('auth.speakerLogin')}
                 </button>
               )}
             </div>

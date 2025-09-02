@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Filter, List, CheckCircle2, HelpCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface QuestionFilterProps {
   currentFilter: 'all' | 'answered' | 'unanswered';
@@ -16,17 +17,19 @@ const QuestionFilter: React.FC<QuestionFilterProps> = ({
   onFilterChange, 
   questionCounts 
 }) => {
+  const { t } = useTranslation();
+  
   const filterOptions = [
-    { value: 'all' as const, label: 'All Questions', icon: List, count: questionCounts.total },
-    { value: 'answered' as const, label: 'Answered', icon: CheckCircle2, count: questionCounts.answered },
-    { value: 'unanswered' as const, label: 'Unanswered', icon: HelpCircle, count: questionCounts.unanswered },
+    { value: 'all' as const, label: t('questionFilter.allQuestions'), icon: List, count: questionCounts.total },
+    { value: 'answered' as const, label: t('questionFilter.answered'), icon: CheckCircle2, count: questionCounts.answered },
+    { value: 'unanswered' as const, label: t('questionFilter.unanswered'), icon: HelpCircle, count: questionCounts.unanswered },
   ];
 
   const [hoveredFilter, setHoveredFilter] = useState<string | null>(null);
 
   return (
     <div className="flex items-center justify-between mb-6">
-      <h2 className="text-xl font-semibold text-gray-900">Questions</h2>
+      <h2 className="text-xl font-semibold text-gray-900">{t('questionList.title')}</h2>
       
       <div className="flex items-center space-x-2">
         <Filter className="h-5 w-5 text-gray-400" />
