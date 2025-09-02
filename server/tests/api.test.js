@@ -1,8 +1,37 @@
 const request = require('supertest');
 // Use the compiled JavaScript version
 const app = require('../dist/app').default;
+const fs = require('fs');
+const path = require('path');
 
 describe('API Integration Tests', () => {
+  // Mock data and functions for the questions endpoint test
+  const mockQuestionsData = [
+    {
+      id: "1",
+      title: "Test Question 1",
+      description: "Description for test question 1",
+      submitterName: "Test User",
+      submittedAt: "2024-01-15T10:30:00.000Z",
+      status: "unanswered"
+    },
+    {
+      id: "2",
+      title: "Test Question 2",
+      description: "Description for test question 2",
+      submitterName: "Another User",
+      submittedAt: "2024-01-15T11:30:00.000Z",
+      status: "answered",
+      answer: "This is a test answer",
+      answeredBy: "Test Answerer",
+      answeredAt: "2024-01-15T12:30:00.000Z"
+    }
+  ];
+  
+  // Save original fs methods before mocking
+  const originalExistsSync = fs.existsSync;
+  const originalReadFileSync = fs.readFileSync;
+
   describe('GET /', () => {
     it('should return the welcome message', async () => {
       const response = await request(app)
@@ -37,5 +66,68 @@ describe('API Integration Tests', () => {
         .get('/non-existent-route')
         .expect(404);
     });
+  });
+
+  describe('GET /questions', () => {
+    beforeEach(() => {
+      // Mock fs.existsSync to return true
+      fs.existsSync = jest.fn().mockReturnValue(true);
+      
+      // Mock fs.readFileSync to return our test data
+      fs.readFileSync = jest.fn().mockReturnValue(JSON.stringify(mockQuestionsData));
+    });
+
+    afterEach(() => {
+      // Restore the original implementations
+      fs.existsSync = originalExistsSync;
+      fs.readFileSync = originalReadFileSync;
+    });
+
+    it('should return all questions', async () => {
+      const response = await request(app)
+        .get('/questions')
+        .expect('Content-Type', /json/)
+        .expect(200);
+      
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toEqual(2);
+      expect(response.body[0]).toHaveProperty('id');
+      expect(response.body[0]).toHaveProperty('title');
+      expect(response.body[0]).toHaveProperty('description');
+      expect(response.body[0]).toHaveProperty('submitterName');
+      expect(response.body[0]).toHaveProperty('submittedAt');
+      expect(response.body[0]).toHaveProperty('status');
+    });
+
+    it('should handle file not found error', async () => {
+      // Override the mock for this specific test
+      fs.existsSync = jest.fn().mockReturnValue(false);
+      
+      const response = await request(app)
+        .get('/questions')
+        .expect('Content-Type', /json/)
+        .expect(404);
+      
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
+      expect(response.body.error).toEqual('Questions data not found');
+    });
+
+    it('should handle server errors', async () => {
+      // Mock fs.readFileSync to throw an error
+      fs.readFileSync = jest.fn().mockImplementation(() => {
+        throw new Error('Test error');
+      });
+      
+      const response = await request(app)
+        .get('/questions')
+        .expect('Content-Type', /json/)
+        .expect(500);
+      
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
+      expect(response.body.error).toEqual('Internal server error');
+    });
+    
   });
 });
