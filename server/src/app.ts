@@ -5,10 +5,50 @@ import path from 'path';
 
 // Create Express app
 const app = express();
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const isDebugMode = process.env.DEBUG === 'true';
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Logging middleware that logs API requests and responses
+const apiLogger = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  // Only log if in development or debug mode is enabled
+  if (isDevelopment || isDebugMode) {
+    const originalSend = res.send;
+    const startTime = Date.now();
+    const endpoint = req.originalUrl;
+    const method = req.method;
+    const requestBody = Object.keys(req.body).length ? req.body : 'No body';
+    
+    // Format timestamp in the requested format: YYYY/MM/DD, HH:MM:SS
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    
+    console.log(`\n[${timestamp}] [API REQUEST] ${method} ${endpoint}`);
+    console.log(`[REQUEST BODY] ${JSON.stringify(requestBody, null, 2)}`);
+    
+    // Override res.send to capture and log the response
+    res.send = function (body: any) {
+      const responseTime = Date.now() - startTime;
+      // Format response timestamp in the requested format: YYYY/MM/DD, HH:MM:SS
+      const now = new Date();
+      const responseTimestamp = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+      
+      console.log(`[${responseTimestamp}] [API RESPONSE] ${method} ${endpoint} - Status: ${res.statusCode}`);
+      console.log(`[RESPONSE DATA] ${typeof body === 'object' ? JSON.stringify(body, null, 2) : body}`);
+      console.log(`[RESPONSE TIME] ${responseTime}ms\n`);
+      
+      return originalSend.call(this, body);
+    };
+  }
+  
+  next();
+};
+
+// Apply the logger middleware
+app.use(apiLogger);
 
 // Default endpoint as requested
 app.get('/', (req, res) => {
@@ -93,7 +133,7 @@ app.put('/questions/:id', (req, res) => {
     let questions = JSON.parse(questionsData);
     
     // Find the question to update
-    const questionIndex = questions.findIndex(q => q.id === id);
+    const questionIndex = questions.findIndex((q: { id: string }) => q.id === id);
     
     if (questionIndex === -1) {
       return res.status(404).json({ 
@@ -186,5 +226,20 @@ app.post('/questions', (req, res) => {
     res.status(500).json(errorResponse);
   }
 });
+
+// Add startup logging without modifying the listen method
+const originalListen = app.listen;
+app.listen = function(this: typeof app, ...args: Parameters<typeof originalListen>): ReturnType<typeof originalListen> {
+  const server = originalListen.call(this, ...args);
+  const port = typeof args[0] === 'number' ? args[0] : 'unknown';
+  
+  // Format timestamp in the requested format: YYYY/MM/DD, HH:MM:SS
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+  
+  console.log(`[${timestamp}] Server is running on port ${port}`);
+  console.log(`[${timestamp}] API logging is ${isDevelopment || isDebugMode ? 'enabled' : 'disabled'}`);
+  return server;
+} as typeof app.listen;
 
 export default app;
