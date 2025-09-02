@@ -10,7 +10,7 @@ app.use(express.json());
 
 // Default endpoint as requested
 app.get('/', (req, res) => {
-  res.send('Hello Backend for Q&A project');
+  res.send('Hello Backend for Q&A Live');
 });
 
 // Health check endpoint

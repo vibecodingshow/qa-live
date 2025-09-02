@@ -1,4 +1,4 @@
-# Vibe Coding Show
+# Vibe Coding Show - Q&A Live
 
 A full-stack Q&A platform application with a React frontend and Node.js backend. This platform allows audience members to submit questions anonymously, and speakers can log in to answer them during presentations or events.
 
