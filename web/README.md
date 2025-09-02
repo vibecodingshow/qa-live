@@ -1,4 +1,4 @@
-# Q&A Platform
+# Q&A Live Frontend
 
 A modern, responsive web application for managing questions and answers during presentations or events. Built with React, TypeScript, and Tailwind CSS.
 
