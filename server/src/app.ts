@@ -2,11 +2,18 @@ import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // Create Express app
 const app = express();
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const isDebugMode = process.env.DEBUG === 'true';
+const logLevel = process.env.LOG_LEVEL || 'INFO';
+
+// Determine if debug logging is enabled
+const isDebugMode = logLevel === 'DEBUG';
 
 // Middleware
 app.use(cors());
@@ -15,7 +22,7 @@ app.use(express.json());
 // Logging middleware that logs API requests and responses
 const apiLogger = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   // Only log if in development or debug mode is enabled
-  if (isDevelopment || isDebugMode) {
+  if (isDevelopment || isDebugMode || logLevel !== 'ERROR') {
     const originalSend = res.send;
     const startTime = Date.now();
     const endpoint = req.originalUrl;
@@ -27,7 +34,11 @@ const apiLogger = (req: express.Request, res: express.Response, next: express.Ne
     const timestamp = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
     
     console.log(`\n[${timestamp}] [API REQUEST] ${method} ${endpoint}`);
-    console.log(`[REQUEST BODY] ${JSON.stringify(requestBody, null, 2)}`);
+    
+    // Only log request body in DEBUG mode
+    if (isDebugMode) {
+      console.log(`[REQUEST BODY] ${JSON.stringify(requestBody, null, 2)}`);
+    }
     
     // Override res.send to capture and log the response
     res.send = function (body: any) {
@@ -37,7 +48,12 @@ const apiLogger = (req: express.Request, res: express.Response, next: express.Ne
       const responseTimestamp = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
       
       console.log(`[${responseTimestamp}] [API RESPONSE] ${method} ${endpoint} - Status: ${res.statusCode}`);
-      console.log(`[RESPONSE DATA] ${typeof body === 'object' ? JSON.stringify(body, null, 2) : body}`);
+      
+      // Only log response data in DEBUG mode
+      if (isDebugMode) {
+        console.log(`[RESPONSE DATA] ${typeof body === 'object' ? JSON.stringify(body, null, 2) : body}`);
+      }
+      
       console.log(`[RESPONSE TIME] ${responseTime}ms\n`);
       
       return originalSend.call(this, body);
@@ -238,6 +254,7 @@ app.listen = function(this: typeof app, ...args: Parameters<typeof originalListe
   const timestamp = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
   
   console.log(`[${timestamp}] Server is running on port ${port}`);
+  console.log(`[${timestamp}] Log level: ${logLevel}`);
   console.log(`[${timestamp}] API logging is ${isDevelopment || isDebugMode ? 'enabled' : 'disabled'}`);
   return server;
 } as typeof app.listen;

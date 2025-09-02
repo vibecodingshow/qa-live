@@ -38,7 +38,10 @@
     "description": "What are the essential security measures that organizations should implement when migrating to cloud infrastructure?",
     "submitterName": "Emma Wilson",
     "submittedAt": "2024-01-15T07:15:00.000Z",
-    "status": "unanswered"
+    "status": "answered",
+    "answer": "Answered live on stage",
+    "answeredBy": "Dr. Smith",
+    "answeredAt": "2025-09-02T16:06:49.119Z"
   },
   {
     "id": "5",
@@ -46,7 +49,10 @@
     "description": "How should we design database schemas and choose database technologies for applications that need to handle millions of concurrent users?",
     "submitterName": "David Park",
     "submittedAt": "2024-01-15T06:30:00.000Z",
-    "status": "unanswered"
+    "status": "answered",
+    "answer": "Answered live on stage",
+    "answeredBy": "Dr. Smith",
+    "answeredAt": "2025-09-02T16:12:31.474Z"
   },
   {
     "id": "1756826910867",
@@ -58,5 +64,16 @@
     "answer": "Answered live on stage",
     "answeredBy": "Dr. Smith",
     "answeredAt": "2025-09-02T15:53:46.253Z"
+  },
+  {
+    "id": "1756830257044",
+    "title": "444",
+    "description": "444",
+    "submitterName": "徐磊",
+    "submittedAt": "2025-09-02T16:24:17.044Z",
+    "status": "answered",
+    "answer": "5555",
+    "answeredBy": "Dr. Smith",
+    "answeredAt": "2025-09-02T16:24:29.054Z"
   }
 ]

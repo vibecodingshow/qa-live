@@ -1,7 +1,7 @@
 import { Question } from '../types';
 
-// Base URL for API requests
-const API_BASE_URL = 'http://localhost:3000';
+// Base URL for API requests - use proxy path
+const API_BASE_URL = '/api';
 
 // Helper function to handle API responses
 const handleResponse = async (response: Response) => {

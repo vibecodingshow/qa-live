@@ -2,8 +2,14 @@ import app from './app';
 import { createServer } from 'http';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import dotenv from 'dotenv';
+import path from 'path';
 
-const port = 3000;
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+// Get port from environment variable or use default
+const port = parseInt(process.env.SERVER_PORT || '3000', 10);
 const execAsync = promisify(exec);
 
 // Function to check if port is in use
