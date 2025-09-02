@@ -35,8 +35,10 @@ src/
 │   ├── AnswerModal.tsx
 │   ├── FloatingSubmitButton.tsx
 │   ├── Header.tsx
+│   ├── HeroSection.tsx
 │   ├── LoginModal.tsx
 │   ├── QuestionCard.tsx
+│   ├── QuestionFilter.tsx
 │   ├── QuestionModal.tsx
 │   └── StatisticsCards.tsx
 ├── data/               # Sample data files
@@ -50,7 +52,25 @@ src/
 │   └── index.ts
 ├── utils/              # Utility functions
 │   └── dateUtils.ts
-└── App.tsx             # Main application component
+├── App.tsx             # Main application component
+├── index.css           # Global styles
+├── main.tsx            # Application entry point
+└── vite-env.d.ts       # Vite type declarations
+```
+
+### Project Configuration Files
+
+```
+├── .gitignore              # Git ignore file
+├── eslint.config.js        # ESLint configuration
+├── index.html              # HTML entry point
+├── package.json            # Project dependencies and scripts
+├── postcss.config.js       # PostCSS configuration for Tailwind
+├── tailwind.config.js      # Tailwind CSS configuration
+├── tsconfig.json           # TypeScript configuration
+├── tsconfig.app.json       # App-specific TypeScript config
+├── tsconfig.node.json      # Node-specific TypeScript config
+└── vite.config.ts          # Vite bundler configuration
 ```
 
 ## Setup Instructions
@@ -67,6 +87,11 @@ src/
 
 3. **Access the application:**
    Open your browser and navigate to the local development URL (typically `http://localhost:5173`)
+
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
 
 ## Usage Guide
 
@@ -105,6 +130,8 @@ The application uses a professional color palette:
 - **Modern React Patterns:** Uses functional components, hooks, and TypeScript throughout
 - **Accessibility:** Includes proper ARIA labels, keyboard navigation, and semantic HTML
 - **Performance:** Implements React.memo and proper state management for optimal performance
+- **Build Tools:** Uses Vite for fast development and optimized production builds
+- **Styling:** Tailwind CSS for utility-first styling approach
 
 ## Future Enhancements
 
