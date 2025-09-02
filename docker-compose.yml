@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Backend server
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: qa-live-server
+    restart: unless-stopped
+    ports:
+      - "3007:3007"
+    environment:
+      - NODE_ENV=production
+      - SERVER_PORT=3007
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./server/src/data:/app/dist/data
+    networks:
+      - qa-live-network
+
+  # Frontend web application
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: qa-live-web
+    restart: unless-stopped
+    ports:
+      - "6173:80"  # Using port 6173 to match configuration
+    depends_on:
+      - server
+    networks:
+      - qa-live-network
+
+networks:
+  qa-live-network:
+    driver: bridge
+
+volumes:
+  data:
+    driver: local

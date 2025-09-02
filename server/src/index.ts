@@ -12,36 +12,22 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 const port = parseInt(process.env.SERVER_PORT || '3000', 10);
 const execAsync = promisify(exec);
 
-// Function to check if port is in use
+// Function to check if port is in use - simplified for container environment
 async function isPortInUse(port: number): Promise<boolean> {
   try {
-    // Try to find processes using the port
-    const { stdout } = await execAsync(`lsof -i:${port} -t || echo ''`);
-    return stdout.trim() !== '';
+    // In container, we'll skip the port check to avoid permission issues
+    return false;
   } catch (error) {
     console.error('Error checking port:', error);
     return false;
   }
 }
 
-// Function to kill process using a port
+// Function to kill process using a port - disabled in container
 async function killProcessOnPort(port: number): Promise<boolean> {
-  try {
-    const { stdout } = await execAsync(`lsof -i:${port} -t || echo ''`);
-    const pid = stdout.trim();
-    
-    if (pid && pid !== process.pid.toString()) {
-      console.log(`Killing process ${pid} using port ${port}`);
-      await execAsync(`kill -9 ${pid}`);
-      // Wait a moment for the port to be released
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error('Error killing process:', error);
-    return false;
-  }
+  // Skip killing processes in container environment
+  console.log(`Skipping port killing in container environment`);
+  return false;
 }
 
 // Start server with port conflict resolution
