@@ -31,6 +31,7 @@ describe('API Integration Tests', () => {
   // Save original fs methods before mocking
   const originalExistsSync = fs.existsSync;
   const originalReadFileSync = fs.readFileSync;
+  const originalWriteFileSync = fs.writeFileSync;
 
   describe('GET /', () => {
     it('should return the welcome message', async () => {
@@ -81,6 +82,7 @@ describe('API Integration Tests', () => {
       // Restore the original implementations
       fs.existsSync = originalExistsSync;
       fs.readFileSync = originalReadFileSync;
+      fs.writeFileSync = originalWriteFileSync;
     });
 
     it('should return all questions', async () => {
@@ -129,5 +131,97 @@ describe('API Integration Tests', () => {
       expect(response.body.error).toEqual('Internal server error');
     });
     
+  });
+
+  describe('POST /questions', () => {
+    beforeEach(() => {
+      // Mock fs methods
+      fs.existsSync = jest.fn().mockReturnValue(true);
+      fs.readFileSync = jest.fn().mockReturnValue(JSON.stringify(mockQuestionsData));
+      fs.writeFileSync = jest.fn();
+    });
+
+    afterEach(() => {
+      // Restore original fs methods
+      fs.existsSync = originalExistsSync;
+      fs.readFileSync = originalReadFileSync;
+      fs.writeFileSync = originalWriteFileSync;
+    });
+
+    it('should create a new question and return 201 status', async () => {
+      const newQuestion = {
+        title: 'How do I implement a REST API?',
+        description: 'I need help with setting up routes',
+        submitterName: 'Developer'
+      };
+
+      const response = await request(app)
+        .post('/questions')
+        .send(newQuestion)
+        .expect('Content-Type', /json/)
+        .expect(201);
+      
+      // Verify response structure
+      expect(response.body).toHaveProperty('id');
+      expect(response.body).toHaveProperty('title', newQuestion.title);
+      expect(response.body).toHaveProperty('description', newQuestion.description);
+      expect(response.body).toHaveProperty('submitterName', newQuestion.submitterName);
+      expect(response.body).toHaveProperty('submittedAt');
+      expect(response.body).toHaveProperty('status', 'unanswered');
+      
+      // Verify fs.writeFileSync was called
+      expect(fs.writeFileSync).toHaveBeenCalled();
+      
+      // Extract the arguments passed to writeFileSync
+      const writeArgs = fs.writeFileSync.mock.calls[0];
+      expect(writeArgs[0]).toContain('questions.json');
+      
+      // Parse the JSON that was written to verify it contains our new question
+      const writtenData = JSON.parse(writeArgs[1]);
+      expect(Array.isArray(writtenData)).toBeTruthy();
+      
+      // Find our newly added question
+      const addedQuestion = writtenData.find(q => q.title === newQuestion.title);
+      expect(addedQuestion).toBeTruthy();
+      expect(addedQuestion.submitterName).toBe(newQuestion.submitterName);
+    });
+
+    it('should return 400 if question title is missing', async () => {
+      const response = await request(app)
+        .post('/questions')
+        .send({ submitterName: 'Developer', description: 'Some description' })
+        .expect('Content-Type', /json/)
+        .expect(400);
+      
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
+      expect(fs.writeFileSync).not.toHaveBeenCalled();
+    });
+
+    it('should use "Anonymous" as default submitterName if not provided', async () => {
+      const response = await request(app)
+        .post('/questions')
+        .send({ title: 'What is Node.js?', description: 'Please explain' })
+        .expect('Content-Type', /json/)
+        .expect(201);
+      
+      expect(response.body).toHaveProperty('submitterName', 'Anonymous');
+    });
+
+    it('should handle server errors during question creation', async () => {
+      // Mock writeFileSync to throw an error
+      fs.writeFileSync = jest.fn().mockImplementation(() => {
+        throw new Error('Test write error');
+      });
+      
+      const response = await request(app)
+        .post('/questions')
+        .send({ title: 'Test question', description: 'Test description' })
+        .expect('Content-Type', /json/)
+        .expect(500);
+      
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
+    });
   });
 });

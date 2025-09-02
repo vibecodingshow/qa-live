@@ -8,16 +8,37 @@ import QuestionModal from '../components/QuestionModal';
 import FloatingSubmitButton from '../components/FloatingSubmitButton';
 import HeroSection from '../components/HeroSection';
 import { Question } from '../types';
-import { sampleQuestions } from '../data/Questions';
 import { useAuth } from '../hooks/useAuth';
+import { apiService } from '../utils/apiService';
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
-  const [questions, setQuestions] = useState<Question[]>(sampleQuestions);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'answered' | 'unanswered'>('all');
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [showHeroSection, setShowHeroSection] = useState(true);
+
+  // Fetch questions from API
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        setIsLoading(true);
+        const data = await apiService.getQuestions();
+        setQuestions(data);
+        setError(null);
+      } catch (err) {
+        console.error('Failed to fetch questions:', err);
+        setError('Failed to load questions. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
 
   // Set responsive default visibility for hero section
   useEffect(() => {
@@ -71,31 +92,35 @@ const Home: React.FC = () => {
     unanswered: questions.filter(q => q.status === 'unanswered').length,
   }), [questions]);
 
-  const handleQuestionSubmit = (title: string, description: string, submitterName: string) => {
-    const newQuestion: Question = {
-      id: `${Date.now()}`,
-      title,
-      description,
-      submitterName,
-      submittedAt: new Date(),
-      status: 'unanswered',
-    };
-    
-    setQuestions(prev => [newQuestion, ...prev]);
+  const handleQuestionSubmit = async (title: string, description: string, submitterName: string) => {
+    try {
+      const questionData = {
+        title,
+        description,
+        submitterName
+      };
+      
+      const newQuestion = await apiService.submitQuestion(questionData);
+      setQuestions(prev => [newQuestion, ...prev]);
+    } catch (err) {
+      console.error('Failed to submit question:', err);
+      // You could add error handling UI here
+    }
   };
 
-  const handleAnswerSubmit = (questionId: string, answer: string) => {
-    setQuestions(prev => prev.map(q => 
-      q.id === questionId 
-        ? {
-            ...q,
-            status: 'answered' as const,
-            answer,
-            answeredBy: speaker?.name,
-            answeredAt: new Date(),
-          }
-        : q
-    ));
+  const handleAnswerSubmit = async (questionId: string, answer: string) => {
+    try {
+      if (!speaker?.name) return;
+      
+      const updatedQuestion = await apiService.submitAnswer(questionId, answer, speaker.name);
+      
+      setQuestions(prev => prev.map(q => 
+        q.id === questionId ? updatedQuestion : q
+      ));
+    } catch (err) {
+      console.error('Failed to submit answer:', err);
+      // You could add error handling UI here
+    }
   };
 
   return (
@@ -134,7 +159,24 @@ const Home: React.FC = () => {
         />
         
         <div className="space-y-6">
-          {filteredAndSortedQuestions.length === 0 ? (
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+              </div>
+              <p className="mt-2 text-gray-500">{t('questionList.loading')}</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500">{error}</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                {t('questionList.retry')}
+              </button>
+            </div>
+          ) : filteredAndSortedQuestions.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">
                 {searchTerm || statusFilter !== 'all' 

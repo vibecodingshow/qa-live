@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "title": "What are the latest trends in AI development?",
+    "description": "I would like to understand the current trends and future directions in artificial intelligence development, particularly in machine learning and neural networks.",
+    "submitterName": "Alex Johnson",
+    "submittedAt": "2024-01-15T10:30:00.000Z",
+    "status": "answered",
+    "answer": "dddd",
+    "answeredBy": "Dr. Smith",
+    "answeredAt": "2025-09-02T15:54:09.903Z"
+  },
+  {
+    "id": "2",
+    "title": "How to implement microservices architecture?",
+    "description": "Can you explain the best practices for implementing microservices architecture in a large-scale application? What are the main challenges and solutions?",
+    "submitterName": "Sarah Chen",
+    "submittedAt": "2024-01-15T09:45:00.000Z",
+    "status": "answered",
+    "answer": "Microservices architecture requires careful planning of service boundaries, data consistency patterns, and communication protocols. Key considerations include API gateway implementation, service discovery, and monitoring strategies.",
+    "answeredBy": "Dr. Smith",
+    "answeredAt": "2024-01-15T11:20:00.000Z"
+  },
+  {
+    "id": "3",
+    "title": "Best practices for React performance optimization?",
+    "description": "What are the most effective techniques for optimizing React application performance, especially for large applications with complex state management?",
+    "submitterName": "Mike Rodriguez",
+    "submittedAt": "2024-01-15T08:20:00.000Z",
+    "status": "answered",
+    "answer": "Key React performance optimizations include using React.memo for component memoization, implementing proper key props, lazy loading components, and utilizing useMemo and useCallback hooks strategically.",
+    "answeredBy": "Jane Developer",
+    "answeredAt": "2024-01-15T10:15:00.000Z"
+  },
+  {
+    "id": "4",
+    "title": "Cloud security best practices",
+    "description": "What are the essential security measures that organizations should implement when migrating to cloud infrastructure?",
+    "submitterName": "Emma Wilson",
+    "submittedAt": "2024-01-15T07:15:00.000Z",
+    "status": "unanswered"
+  },
+  {
+    "id": "5",
+    "title": "Database design for high-traffic applications",
+    "description": "How should we design database schemas and choose database technologies for applications that need to handle millions of concurrent users?",
+    "submitterName": "David Park",
+    "submittedAt": "2024-01-15T06:30:00.000Z",
+    "status": "unanswered"
+  },
+  {
+    "id": "1756826910867",
+    "title": "3333",
+    "description": "3333",
+    "submitterName": "徐磊",
+    "submittedAt": "2025-09-02T15:28:30.867Z",
+    "status": "answered",
+    "answer": "Answered live on stage",
+    "answeredBy": "Dr. Smith",
+    "answeredAt": "2025-09-02T15:53:46.253Z"
+  }
+]

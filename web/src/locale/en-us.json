@@ -45,7 +45,10 @@
     "mostVoted": "Most voted",
     "searchPlaceholder": "Search questions...",
     "noQuestionsFiltered": "No questions found matching your filters.",
-    "noQuestions": "No questions yet. Be the first to ask!"
+    "noQuestions": "No questions yet. Be the first to ask!",
+    "loading": "Loading questions...",
+    "error": "Failed to load questions",
+    "retry": "Try Again"
   },
   "questionFilter": {
     "allQuestions": "All Questions",

@@ -8,9 +8,18 @@ interface FloatingSubmitButtonProps {
 
 const FloatingSubmitButton: React.FC<FloatingSubmitButtonProps> = ({ onClick }) => {
   const { t } = useTranslation();
+  
+  const handleClick = async () => {
+    // Call the original onClick handler
+    onClick();
+    
+    // The actual question submission will be handled by the form component
+    // that this button triggers, using the submitQuestion function from apiService
+  };
+  
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       className="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white p-4 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 z-40"
       aria-label={t('questionForm.submit')}
     >

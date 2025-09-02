@@ -45,7 +45,10 @@
     "mostVoted": "最多投票",
     "searchPlaceholder": "搜索问题...",
     "noQuestionsFiltered": "没有找到符合筛选条件的问题。",
-    "noQuestions": "暂无问题。成为第一个提问的人！"
+    "noQuestions": "暂无问题。成为第一个提问的人！",
+    "loading": "正在加载问题...",
+    "error": "加载问题失败",
+    "retry": "重试"
   },
   "questionFilter": {
     "allQuestions": "所有问题",
