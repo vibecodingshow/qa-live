@@ -1,4 +1,4 @@
-import { Question } from '../types';
+import { Question, Speaker } from '../types';
 
 // Base URL for API requests - use proxy path
 const API_BASE_URL = '/api';
@@ -128,6 +128,35 @@ export const apiService = {
       return convertDates(data);
     } catch (error) {
       console.error('Error submitting answer:', error);
+      throw error;
+    }
+  },
+
+  // Authentication endpoints
+  login: async (username: string, password: string): Promise<{ success: boolean; user?: Speaker }> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
+  },
+
+  // Get all speakers
+  getSpeakers: async (): Promise<Speaker[]> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/speakers`);
+      const data = await handleResponse(response);
+      return data;
+    } catch (error) {
+      console.error('Error fetching speakers:', error);
       throw error;
     }
   }

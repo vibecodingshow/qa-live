@@ -19,7 +19,7 @@ export interface Speaker {
 
 export interface AuthContextType {
   speaker: Speaker | null;
-  login: (username: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
 }

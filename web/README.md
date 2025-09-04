@@ -41,9 +41,7 @@ src/
 │   ├── QuestionFilter.tsx
 │   ├── QuestionModal.tsx
 │   └── StatisticsCards.tsx
-├── data/               # Sample data files
-│   ├── Questions.ts
-│   └── SpeakerUsers.ts
+├── data/               # Sample data files (deprecated - now uses backend API)
 ├── hooks/              # Custom React hooks
 │   └── useAuth.ts
 ├── pages/              # Page components
@@ -112,7 +110,7 @@ src/
 5. **Submit:** Your answer will be immediately visible to all users
 
 ### Sample Speaker Accounts
-The application includes sample speaker accounts for testing. The credentials are stored in the `src/data/SpeakerUsers.ts` file. In a production environment, these would be managed through a secure backend system.
+The application connects to the backend API for speaker authentication. Sample accounts are stored in the backend's `speakers.json` file. In a production environment, these would be managed through a secure database system.
 
 ## Color Scheme
 
@@ -125,7 +123,7 @@ The application uses a professional color palette:
 
 ## Development Notes
 
-- **No Backend Required:** This is a frontend-only application using sample data
+- **Backend Integration:** Uses Express.js backend API for authentication and data management
 - **Responsive Design:** Optimized for mobile (320px+), tablet (768px+), and desktop (1024px+)
 - **Modern React Patterns:** Uses functional components, hooks, and TypeScript throughout
 - **Accessibility:** Includes proper ARIA labels, keyboard navigation, and semantic HTML

@@ -243,6 +243,109 @@ app.post('/questions', (req, res) => {
   }
 });
 
+// Login endpoint - POST to authenticate user
+app.post('/login', (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    // Validate request body
+    if (!username || typeof username !== 'string' || username.trim() === '') {
+      return res.status(400).json({ 
+        error: 'Bad request',
+        message: 'Username is required and cannot be empty' 
+      });
+    }
+    
+    if (!password || typeof password !== 'string' || password.trim() === '') {
+      return res.status(400).json({ 
+        error: 'Bad request',
+        message: 'Password is required and cannot be empty' 
+      });
+    }
+    
+    const speakersFilePath = path.join(__dirname, 'data', 'speakers.json');
+    
+    // Check if file exists
+    if (!fs.existsSync(speakersFilePath)) {
+      return res.status(500).json({ 
+        error: 'Server configuration error',
+        message: 'User data file not found' 
+      });
+    }
+    
+    // Read speakers from file
+    const speakersData = fs.readFileSync(speakersFilePath, 'utf8');
+    const speakers = JSON.parse(speakersData);
+    
+    // Find user by username
+    const user = speakers.find((speaker: { username: string }) => 
+      speaker.username === username.trim()
+    );
+    
+    if (!user) {
+      return res.status(401).json({ 
+        error: 'Unauthorized',
+        message: 'Invalid username or password' 
+      });
+    }
+    
+    // Check password (in production, use bcrypt or similar)
+    if (user.password !== password.trim()) {
+      return res.status(401).json({ 
+        error: 'Unauthorized',
+        message: 'Invalid username or password' 
+      });
+    }
+    
+    // Return user data without password
+    const { password: _, ...userWithoutPassword } = user;
+    
+    res.json({
+      success: true,
+      user: userWithoutPassword
+    });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: 'Failed to authenticate user' 
+    });
+  }
+});
+
+// Speakers endpoint - GET all speakers (for speaker selection)
+app.get('/speakers', (req, res) => {
+  try {
+    const speakersFilePath = path.join(__dirname, 'data', 'speakers.json');
+    
+    // Check if file exists
+    if (!fs.existsSync(speakersFilePath)) {
+      return res.status(404).json({ 
+        error: 'Speakers data not found',
+        message: 'The speakers data file does not exist'
+      });
+    }
+    
+    // Read speakers from JSON file
+    const speakersData = fs.readFileSync(speakersFilePath, 'utf8');
+    const speakers = JSON.parse(speakersData);
+    
+    // Return speakers without passwords
+    const speakersWithoutPasswords = speakers.map((speaker: { password: string, [key: string]: any }) => {
+      const { password: _, ...speakerWithoutPassword } = speaker;
+      return speakerWithoutPassword;
+    });
+    
+    res.status(200).json(speakersWithoutPasswords);
+  } catch (error) {
+    console.error('Error retrieving speakers:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: 'Failed to retrieve speakers data' 
+    });
+  }
+});
+
 // Add startup logging without modifying the listen method
 const originalListen = app.listen;
 app.listen = function(this: typeof app, ...args: Parameters<typeof originalListen>): ReturnType<typeof originalListen> {
