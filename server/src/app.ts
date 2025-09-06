@@ -91,7 +91,7 @@ const apiLogger = (req: express.Request, res: express.Response, next: express.Ne
     // Extract JWT token from Authorization header for debugging
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
-    const tokenStr = token ? ` - Token: ${token.substring(0, 20)}...` : '';
+    const tokenStr = token ? ` - Token: ${token}` : '';
     
     // Log request with body inline and token
     const requestBodyStr = requestBody ? ` - ${JSON.stringify(requestBody)}` : '';
