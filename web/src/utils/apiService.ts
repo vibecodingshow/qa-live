@@ -13,6 +13,7 @@ export const setAuthToken = (token: string | null): void => {
 };
 
 // Base URL for API requests - use proxy path
+// This will be relative to the base path set in vite.config.prod.js
 const API_BASE_URL = '/api';
 
 // Helper function to handle API responses

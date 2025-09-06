@@ -15,5 +15,6 @@ export default defineConfig({
   },
   define: {
     'import.meta.env.BACKEND_URL': JSON.stringify('/api'),
-  }
+  },
+  base: '/projects/qa-live/'
 });
