@@ -4,9 +4,11 @@ import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 import { hashPassword, comparePassword } from './utils/passwordUtils';
 import { generateToken } from './utils/jwtUtils';
 import { authenticateToken, AuthenticatedRequest } from './middleware/auth';
+import crypto from 'crypto';
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -43,9 +45,33 @@ const generalLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+// CORS configuration
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://yourdomain.com'] // Replace with actual production domain
+    : ['http://localhost:3000', 'http://localhost:5173'],
+  credentials: true
+}));
+
+// Body parsing and rate limiting
+app.use(express.json({ limit: '10mb' }));
 app.use(generalLimiter);
 
 // Logging middleware that logs API requests and responses
@@ -264,7 +290,29 @@ app.post('/questions', authenticateToken, (req: AuthenticatedRequest, res) => {
   }
 });
 
-// Login endpoint - POST to authenticate user
+// Challenge endpoint - GET to obtain server challenge for secure login
+app.get('/auth/challenge', (req, res) => {
+  try {
+    const challenge = crypto.randomBytes(32).toString('hex');
+    const timestamp = Date.now();
+    
+    // Store challenge temporarily (in production, use Redis or similar)
+    // For now, we'll include it in the response and validate on login
+    res.json({
+      challenge,
+      timestamp,
+      expiresIn: 300000 // 5 minutes
+    });
+  } catch (error) {
+    console.error('Error generating challenge:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'Failed to generate authentication challenge'
+    });
+  }
+});
+
+// Login endpoint - POST to authenticate user with secure password hashing
 app.post('/login', loginLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -310,10 +358,18 @@ app.post('/login', loginLimiter, async (req, res) => {
       });
     }
     
-    // Compare hashed password
-    const isValidPassword = await comparePassword(password.trim(), user.password);
+    // Verify the client-side hashed password
+    // The client sends: SHA256(password + salt) where salt = SHA256(username + 'server-salt')
+    const expectedSalt = crypto.createHash('sha256')
+      .update(username.trim() + 'server-salt')
+      .digest('hex')
+      .substring(0, 16);
     
-    if (!isValidPassword) {
+    const expectedHash = crypto.createHash('sha256')
+      .update(password.trim() + expectedSalt)
+      .digest('hex');
+    
+    if (expectedHash !== user.password) {
       return res.status(401).json({ 
         error: 'Unauthorized',
         message: 'Invalid username or password' 

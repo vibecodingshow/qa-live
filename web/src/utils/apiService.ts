@@ -1,4 +1,5 @@
 import { Question, Speaker } from '../types';
+import { generateUserSalt, hashPassword } from './authUtils';
 
 // Base URL for API requests - use proxy path
 const API_BASE_URL = '/api';
@@ -132,15 +133,25 @@ export const apiService = {
     }
   },
 
-  // Authentication endpoints
-  login: async (username: string, password: string): Promise<{ success: boolean; user?: Speaker }> => {
+  // Authentication endpoints with client-side password hashing
+  login: async (username: string, password: string): Promise<{ success: boolean; user?: Speaker; token?: string }> => {
     try {
+      // Generate consistent salt for this user (matches server-side generation)
+      const salt = generateUserSalt(username);
+      
+      // Create secure password hash on client side
+      const passwordHash = hashPassword(password, salt);
+      
+      // Send hashed password instead of plain text
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ 
+          username, 
+          password: passwordHash // Send hashed password instead of plain text
+        }),
       });
       return await handleResponse(response);
     } catch (error) {

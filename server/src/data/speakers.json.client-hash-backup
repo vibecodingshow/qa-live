@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "username": "drsmith",
+    "password": "$2b$12$ct3CTXYhs5jERbZvBK5hmuDXB.9ZvN31Dy7VEjeWokUw0UAfj7P3e",
+    "name": "Dr. Smith"
+  },
+  {
+    "id": "2",
+    "username": "janedev",
+    "password": "$2b$12$XkkXvPOpK9YtlWY3MhSgNuc1uXK4yU2eEQlBadvx315L74gr5uOim",
+    "name": "Jane Developer"
+  },
+  {
+    "id": "3",
+    "username": "techexpert",
+    "password": "$2b$12$gHqqy6IKWo0ob6qWlY2qqOUemNRcVooS0ts7Jp/2eHpRp5tq0uXjK",
+    "name": "Tech Expert"
+  }
+]

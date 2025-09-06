@@ -2,19 +2,22 @@
   {
     "id": "1",
     "username": "drsmith",
-    "password": "$2b$12$ct3CTXYhs5jERbZvBK5hmuDXB.9ZvN31Dy7VEjeWokUw0UAfj7P3e",
-    "name": "Dr. Smith"
+    "password": "5b0f77cf50116d5652deed0bb3b7d0cb2701246ae0b758b999831437b21aa231",
+    "name": "Dr. Smith",
+    "salt": "b5665813b6635121"
   },
   {
     "id": "2",
     "username": "janedev",
-    "password": "$2b$12$XkkXvPOpK9YtlWY3MhSgNuc1uXK4yU2eEQlBadvx315L74gr5uOim",
-    "name": "Jane Developer"
+    "password": "310ffb019c91b6e9b23f89af345e8b7237adf3afec1d0dc9c9199c7d56c15d8a",
+    "name": "Jane Developer",
+    "salt": "87a24953cd3a1a8a"
   },
   {
     "id": "3",
     "username": "techexpert",
-    "password": "$2b$12$gHqqy6IKWo0ob6qWlY2qqOUemNRcVooS0ts7Jp/2eHpRp5tq0uXjK",
-    "name": "Tech Expert"
+    "password": "73dc344b9004877c8854a58ad615eb73dc292038431113f830d2d4df1617c388",
+    "name": "Tech Expert",
+    "salt": "9f19225b8e78f1f5"
   }
 ]
