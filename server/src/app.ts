@@ -360,16 +360,8 @@ app.post('/login', loginLimiter, async (req, res) => {
     
     // Verify the client-side hashed password
     // The client sends: SHA256(password + salt) where salt = SHA256(username + 'server-salt')
-    const expectedSalt = crypto.createHash('sha256')
-      .update(username.trim() + 'server-salt')
-      .digest('hex')
-      .substring(0, 16);
-    
-    const expectedHash = crypto.createHash('sha256')
-      .update(password.trim() + expectedSalt)
-      .digest('hex');
-    
-    if (expectedHash !== user.password) {
+    // We need to compare the received hash directly with the stored hash
+    if (password.trim() !== user.password) {
       return res.status(401).json({ 
         error: 'Unauthorized',
         message: 'Invalid username or password' 
