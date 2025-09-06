@@ -1,8 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// Combined deployment configuration for /projects/qa-live/ path
-// Used for deployment on https://vibecodingshow.ai/projects/qa-live
+// Production-only Vite configuration
 export default defineConfig({
   plugins: [react()],
   build: {
@@ -17,5 +16,5 @@ export default defineConfig({
   define: {
     'import.meta.env.BACKEND_URL': JSON.stringify('/api/qa-live'),
   },
-  base: '/projects/qa-live/'  // Base path for combined deployment
+  base: '/'  // Use root path for Docker deployment
 });

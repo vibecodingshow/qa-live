@@ -18,12 +18,12 @@ jobs:
         run: |
           echo "${{ secrets.ACR_AccessKey }}" | docker login vibeimages.azurecr.io -u "vibeimages" --password-stdin || echo "Docker login failed. Check secrets or registry address."
 
-      - name: Build and push Docker images
+      - name: Build and push Docker images (Combined Deployment)
         run: |
-          docker compose -f docker-compose.yml build
-          docker tag vibeimages.azurecr.io/qa-live/qa-live-server:latest vibeimages.azurecr.io/qa-live/qa-live-server:$GITHUB_RUN_NUMBER
-          docker tag vibeimages.azurecr.io/qa-live/qa-live-web:latest vibeimages.azurecr.io/qa-live/qa-live-web:$GITHUB_RUN_NUMBER
-          docker push vibeimages.azurecr.io/qa-live/qa-live-server:latest
-          docker push vibeimages.azurecr.io/qa-live/qa-live-server:$GITHUB_RUN_NUMBER
-          docker push vibeimages.azurecr.io/qa-live/qa-live-web:latest
-          docker push vibeimages.azurecr.io/qa-live/qa-live-web:$GITHUB_RUN_NUMBER
+          docker compose -f docker-compose-combined-deploy.yml build
+          docker tag vibeimages.azurecr.io/qa-live/qa-live-server-combined:latest vibeimages.azurecr.io/qa-live/qa-live-server-combined:$GITHUB_RUN_NUMBER
+          docker tag vibeimages.azurecr.io/qa-live/qa-live-web-combined:latest vibeimages.azurecr.io/qa-live/qa-live-web-combined:$GITHUB_RUN_NUMBER
+          docker push vibeimages.azurecr.io/qa-live/qa-live-server-combined:latest
+          docker push vibeimages.azurecr.io/qa-live/qa-live-server-combined:$GITHUB_RUN_NUMBER
+          docker push vibeimages.azurecr.io/qa-live/qa-live-web-combined:latest
+          docker push vibeimages.azurecr.io/qa-live/qa-live-web-combined:$GITHUB_RUN_NUMBER

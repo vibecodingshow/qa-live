@@ -11,7 +11,7 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build the application (standalone deployment)
+# Build the application (with environment variables to avoid port conflicts)
 ENV NODE_ENV=production
 ENV VITE_DISABLE_SERVER=true
 RUN npm run build

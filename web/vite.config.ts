@@ -83,16 +83,21 @@ export default defineConfig(async ({ mode }) => {
       strictPort: true, // Fail if port is already in use (after our attempt to free it)
       proxy: {
         // Configure proxy for API requests
-        '/api': {
+        '/api/qa-live': {
           target: backendUrl,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: (path) => path.replace(/^\/api\/qa-live/, ''),
         }
       }
     },
     // Make env variables available in the client
     define: {
-      'import.meta.env.BACKEND_URL': JSON.stringify(backendUrl),
+      // Only set BACKEND_URL for client if it's explicitly set and not localhost
+      'import.meta.env.BACKEND_URL': JSON.stringify(
+        env.BACKEND_URL && !env.BACKEND_URL.includes('localhost') 
+          ? backendUrl 
+          : undefined
+      ),
       'import.meta.env.FRONTEND_PORT': JSON.stringify(port),
     }
   };

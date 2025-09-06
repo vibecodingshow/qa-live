@@ -4,8 +4,8 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: qa-live-server
-    image: vibeimages.azurecr.io/qa-live/qa-live-server:latest
+    container_name: qa-live-server-combined
+    image: vibeimages.azurecr.io/qa-live/qa-live-server-combined:latest
     restart: unless-stopped
     ports:
       - "3007:3007"
@@ -18,16 +18,16 @@ services:
     networks:
       - qa-live-network
 
-  # Frontend web application (standalone deployment)
+  # Frontend web application for combined deployment
   web:
     build:
       context: ./web
-      dockerfile: Dockerfile
-    container_name: qa-live-web
-    image: vibeimages.azurecr.io/qa-live/qa-live-web:latest
+      dockerfile: Dockerfile-combined-deploy
+    container_name: qa-live-web-combined
+    image: vibeimages.azurecr.io/qa-live/qa-live-web-combined:latest
     restart: unless-stopped
     ports:
-      - "6173:80"  # Using port 6173 for standalone deployment
+      - "6174:80"  # Using port 6174 for combined deployment
     depends_on:
       - server
     networks:

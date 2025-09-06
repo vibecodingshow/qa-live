@@ -16,7 +16,10 @@ export const setAuthToken = (token: string | null): void => {
 // This will be relative to the base path set in vite.config.prod.js
 // In production with base path '/projects/qa-live/', we need to ensure API calls go to the correct path
 // Using /api/qa-live/ for consistent API path in both standalone and combined deployments
-const API_BASE_URL = import.meta.env.BACKEND_URL || '/api/qa-live';
+// Only use BACKEND_URL if it's explicitly set and not the default localhost value
+const API_BASE_URL = (import.meta.env.BACKEND_URL && !import.meta.env.BACKEND_URL.includes('localhost')) 
+  ? import.meta.env.BACKEND_URL 
+  : '/api/qa-live';
 
 // Helper function to handle API responses
 const handleResponse = async (response: Response) => {
