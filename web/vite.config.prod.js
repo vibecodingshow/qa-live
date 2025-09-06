@@ -14,7 +14,7 @@ export default defineConfig({
     exclude: ['lucide-react'],
   },
   define: {
-    'import.meta.env.BACKEND_URL': JSON.stringify('/api'),
+    'import.meta.env.BACKEND_URL': JSON.stringify('/api/qa-live'),
   },
   base: '/projects/qa-live/'
 });
