@@ -27,18 +27,15 @@ const apiLogger = (req: express.Request, res: express.Response, next: express.Ne
     const startTime = Date.now();
     const endpoint = req.originalUrl;
     const method = req.method;
-    const requestBody = Object.keys(req.body).length ? req.body : 'No body';
+    const requestBody = Object.keys(req.body).length ? req.body : null;
     
     // Format timestamp in the requested format: YYYY/MM/DD, HH:MM:SS
     const now = new Date();
     const timestamp = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
     
-    console.log(`\n[${timestamp}] [API REQUEST] ${method} ${endpoint}`);
-    
-    // Only log request body in DEBUG mode
-    if (isDebugMode) {
-      console.log(`[REQUEST BODY] ${JSON.stringify(requestBody, null, 2)}`);
-    }
+    // Log request with body inline
+    const requestBodyStr = requestBody ? ` - ${JSON.stringify(requestBody)}` : '';
+    console.log(`[${timestamp}] [API REQUEST] ${method} ${endpoint}${requestBodyStr}`);
     
     // Override res.send to capture and log the response
     res.send = function (body: any) {
@@ -47,14 +44,9 @@ const apiLogger = (req: express.Request, res: express.Response, next: express.Ne
       const now = new Date();
       const responseTimestamp = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
       
-      console.log(`[${responseTimestamp}] [API RESPONSE] ${method} ${endpoint} - Status: ${res.statusCode}`);
-      
-      // Only log response data in DEBUG mode
-      if (isDebugMode) {
-        console.log(`[RESPONSE DATA] ${typeof body === 'object' ? JSON.stringify(body, null, 2) : body}`);
-      }
-      
-      console.log(`[RESPONSE TIME] ${responseTime}ms\n`);
+      // Log response with data inline
+      const responseDataStr = typeof body === 'object' ? JSON.stringify(body) : body;
+      console.log(`[${responseTimestamp}] [API RESPONSE] ${method} ${endpoint} - Status: ${res.statusCode} - ${responseTime}ms - ${responseDataStr}`);
       
       return originalSend.call(this, body);
     };
