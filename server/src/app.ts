@@ -3,6 +3,10 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
+import rateLimit from 'express-rate-limit';
+import { hashPassword, comparePassword } from './utils/passwordUtils';
+import { generateToken } from './utils/jwtUtils';
+import { authenticateToken, AuthenticatedRequest } from './middleware/auth';
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -15,9 +19,34 @@ const logLevel = process.env.LOG_LEVEL || 'INFO';
 // Determine if debug logging is enabled
 const isDebugMode = logLevel === 'DEBUG';
 
+// Rate limiting for login endpoint
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: {
+    error: 'Too many login attempts',
+    message: 'Too many login attempts, please try again later.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// General rate limiting
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: {
+    error: 'Too many requests',
+    message: 'Too many requests from this IP, please try again later.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(generalLimiter);
 
 // Logging middleware that logs API requests and responses
 const apiLogger = (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -98,8 +127,8 @@ app.get('/questions', (req, res) => {
   }
 });
 
-// Questions endpoint - PUT to update a question (answer or status)
-app.put('/questions/:id', (req, res) => {
+// Questions endpoint - PUT to update a question (answer or status) - requires authentication
+app.put('/questions/:id', authenticateToken, (req: AuthenticatedRequest, res) => {
   try {
     const { id } = req.params;
     const { status, answer, answeredBy } = req.body;
@@ -185,8 +214,8 @@ app.put('/questions/:id', (req, res) => {
   }
 });
 
-// Questions endpoint - POST a new question
-app.post('/questions', (req, res) => {
+// Questions endpoint - POST a new question - requires authentication
+app.post('/questions', authenticateToken, (req: AuthenticatedRequest, res) => {
   try {
     const { title, description, submitterName = 'Anonymous' } = req.body;
     
@@ -236,7 +265,7 @@ app.post('/questions', (req, res) => {
 });
 
 // Login endpoint - POST to authenticate user
-app.post('/login', (req, res) => {
+app.post('/login', loginLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
     
@@ -281,20 +310,26 @@ app.post('/login', (req, res) => {
       });
     }
     
-    // Check password (in production, use bcrypt or similar)
-    if (user.password !== password.trim()) {
+    // Compare hashed password
+    const isValidPassword = await comparePassword(password.trim(), user.password);
+    
+    if (!isValidPassword) {
       return res.status(401).json({ 
         error: 'Unauthorized',
         message: 'Invalid username or password' 
       });
     }
     
-    // Return user data without password
+    // Generate JWT token
+    const token = generateToken(user.id, user.username);
+    
+    // Return user data without password and include token
     const { password: _, ...userWithoutPassword } = user;
     
     res.json({
       success: true,
-      user: userWithoutPassword
+      user: userWithoutPassword,
+      token: token
     });
   } catch (error) {
     console.error('Error during login:', error);
@@ -303,6 +338,22 @@ app.post('/login', (req, res) => {
       message: 'Failed to authenticate user' 
     });
   }
+});
+
+// Protected route example - requires authentication
+app.get('/profile', authenticateToken, (req: AuthenticatedRequest, res) => {
+  res.json({
+    message: 'This is a protected route',
+    user: req.user
+  });
+});
+
+// Logout endpoint (client-side token removal)
+app.post('/logout', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Logged out successfully. Please remove the token from client storage.'
+  });
 });
 
 // Speakers endpoint - GET all speakers (for speaker selection)
