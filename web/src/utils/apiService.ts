@@ -1,6 +1,17 @@
 import { Question, Speaker } from '../types';
 import { generateUserSalt, hashPassword } from './authUtils';
 
+// Get the current token from the auth context
+const getAuthToken = (): string | null => {
+  // This will be set by the auth context
+  return (window as any).__authToken || null;
+};
+
+// Set the auth token (called by auth context)
+export const setAuthToken = (token: string | null): void => {
+  (window as any).__authToken = token;
+};
+
 // Base URL for API requests - use proxy path
 const API_BASE_URL = '/api';
 
@@ -70,11 +81,18 @@ export const apiService = {
     }
   ): Promise<Question> => {
     try {
+      const token = getAuthToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${API_BASE_URL}/questions/${questionId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(updateData),
       });
       const data = await handleResponse(response);
@@ -113,12 +131,19 @@ export const apiService = {
   // Submit an answer to a question
   submitAnswer: async (questionId: string, answer: string, answeredBy: string): Promise<Question> => {
     try {
+      const token = getAuthToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       // Use the PUT endpoint with the correct data structure
       const response = await fetch(`${API_BASE_URL}/questions/${questionId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({ 
           status: 'answered',
           answer, 
