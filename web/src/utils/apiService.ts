@@ -14,7 +14,8 @@ export const setAuthToken = (token: string | null): void => {
 
 // Base URL for API requests - use proxy path
 // This will be relative to the base path set in vite.config.prod.js
-const API_BASE_URL = '/api';
+// In production with base path '/projects/qa-live/', we need to ensure API calls go to the correct path
+const API_BASE_URL = import.meta.env.BACKEND_URL || '/api';
 
 // Helper function to handle API responses
 const handleResponse = async (response: Response) => {
