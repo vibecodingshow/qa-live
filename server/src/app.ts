@@ -88,9 +88,14 @@ const apiLogger = (req: express.Request, res: express.Response, next: express.Ne
     const now = new Date();
     const timestamp = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
     
-    // Log request with body inline
+    // Extract JWT token from Authorization header for debugging
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
+    const tokenStr = token ? ` - Token: ${token.substring(0, 20)}...` : '';
+    
+    // Log request with body inline and token
     const requestBodyStr = requestBody ? ` - ${JSON.stringify(requestBody)}` : '';
-    console.log(`[${timestamp}] [API REQUEST] ${method} ${endpoint}${requestBodyStr}`);
+    console.log(`[${timestamp}] [API REQUEST] ${method} ${endpoint}${requestBodyStr}${tokenStr}`);
     
     // Override res.send to capture and log the response
     res.send = function (body: any) {
