@@ -240,8 +240,8 @@ app.put('/questions/:id', authenticateToken, (req: AuthenticatedRequest, res) =>
   }
 });
 
-// Questions endpoint - POST a new question - requires authentication
-app.post('/questions', authenticateToken, (req: AuthenticatedRequest, res) => {
+// Questions endpoint - POST a new question - allows anonymous users
+app.post('/questions', (req, res) => {
   try {
     const { title, description, submitterName = 'Anonymous' } = req.body;
     
