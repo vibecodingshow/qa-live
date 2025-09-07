@@ -1,5 +1,5 @@
 import { Question, Speaker } from '../types';
-import { generateUserSalt, hashPassword } from './authUtils';
+
 
 // Get the current token from the auth context
 const getAuthToken = (): string | null => {
@@ -164,16 +164,10 @@ export const apiService = {
     }
   },
 
-  // Authentication endpoints with client-side password hashing
+  // Authentication endpoints - send plain password over HTTPS
   login: async (username: string, password: string): Promise<{ success: boolean; user?: Speaker; token?: string }> => {
     try {
-      // Generate consistent salt for this user (matches server-side generation)
-      const salt = generateUserSalt(username);
-      
-      // Create secure password hash on client side
-      const passwordHash = hashPassword(password, salt);
-      
-      // Send hashed password instead of plain text
+      // Send plain password (HTTPS ensures transport security)
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: {
@@ -181,7 +175,7 @@ export const apiService = {
         },
         body: JSON.stringify({ 
           username, 
-          password: passwordHash // Send hashed password instead of plain text
+          password: password // Send plain password over HTTPS
         }),
       });
       return await handleResponse(response);

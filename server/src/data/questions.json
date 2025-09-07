@@ -112,7 +112,10 @@
     "description": "This question has no submitter name specified",
     "submitterName": "Anonymous",
     "submittedAt": "2025-09-06T06:17:39.602Z",
-    "status": "unanswered"
+    "status": "answered",
+    "answer": "Answered live on stage",
+    "answeredBy": "Dr. Smith",
+    "answeredAt": "2025-09-07T15:15:09.217Z"
   },
   {
     "id": "1757139478978",
