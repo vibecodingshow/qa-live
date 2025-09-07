@@ -1,10 +1,10 @@
 services:
   # Backend server
-  server:
+  qa-live-server:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: qa-live-server-combined
+    container_name: qa-live-server
     image: vibeimages.azurecr.io/qa-live/qa-live-server-combined:latest
     restart: unless-stopped
     ports:
@@ -19,17 +19,17 @@ services:
       - qa-live-network
 
   # Frontend web application for combined deployment
-  web:
+  qa-live-web:
     build:
       context: ./web
       dockerfile: Dockerfile-combined-deploy
-    container_name: qa-live-web-combined
+    container_name: qa-live-web
     image: vibeimages.azurecr.io/qa-live/qa-live-web-combined:latest
     restart: unless-stopped
     ports:
       - "6174:80"  # Using port 6174 for combined deployment
     depends_on:
-      - server
+      - qa-live-server
     networks:
       - qa-live-network
 
