@@ -30,7 +30,7 @@ services:
     ports:
       - "6173:80"  # Using port 6173 to match configuration
     depends_on:
-      - server
+      - qa-live-server
     networks:
       - qa-live-network
 
