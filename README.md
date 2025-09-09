@@ -14,7 +14,7 @@ A real-time Q&A application with a React frontend and Express backend.
 1. Build and start the containers:
 
 ```bash
-docker-compose up -d
+docker-compose -f docker-compose-standalone.yml up -d
 ```
 
 2. Access the application:

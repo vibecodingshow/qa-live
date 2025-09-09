@@ -7,7 +7,7 @@ This project supports two deployment configurations:
 For independent Docker deployment where the application runs on its own domain/port.
 
 ### Files:
-- `docker-compose.yml` - Main compose file for standalone deployment
+- `docker-compose-standalone.yml` - Main compose file for standalone deployment
 - `web/Dockerfile` - Dockerfile for standalone web build
 - `web/vite.config.standalone.js` - Vite config for standalone build
 - `web/nginx.conf` - Nginx config for standalone deployment
