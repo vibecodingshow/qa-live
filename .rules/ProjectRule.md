@@ -7,4 +7,5 @@
 - [文件结构说明](./file_structure.md) - 项目目录结构说明
 - [API接口文档](./api.md) - 系统API接口说明
 - [数据模型文档](./data-schema.md) - 包含所有数据模型定义和关系
+- [部署结构文档](./deployment_structure.md) - 项目部署架构说明
 (此处可添加其他开发规范内容)
